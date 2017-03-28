@@ -2,6 +2,7 @@
 #include "src/BubbleSort.hpp"
 #include "src/InsertionSort.hpp"
 #include "src/MergeSort.hpp"
+#include "src/QuickSort.hpp"
 #include "src/SelectionSort.hpp"
 #include "src/SortOrder.hpp"
 
@@ -17,10 +18,10 @@ enum SortFunction
 	Selection
 };
 
-const int sortsSize = 4;
+const int sortsSize = 5;
 
 // sorts to test
-SortFunction sorts[sortsSize] = { Bubble, Insertion, Merge, Selection };
+SortFunction sorts[sortsSize] = { Bubble, Insertion, Merge, Quick, Selection };
 
 // set array functions
 void setIntArray(int*, int*, int);
@@ -171,6 +172,9 @@ void runSorter(T* array, int size, SortOrder order, SortFunction function)
 			break;
 		case Merge:
 			sorter = new MergeSort<T>(array, size, order);
+			break;
+		case Quick:
+			sorter = new QuickSort<T>(array, size, order);
 			break;
 		case Selection:
 			sorter = new SelectionSort<T>(array, size, order);
