@@ -1,6 +1,7 @@
 #include <iostream>
 #include "src/BubbleSort.hpp"
 #include "src/InsertionSort.hpp"
+#include "src/MergeSort.hpp"
 #include "src/SelectionSort.hpp"
 #include "src/SortOrder.hpp"
 
@@ -167,6 +168,9 @@ void runSorter(T* array, int size, SortOrder order, SortFunction function)
 			break;
 		case Insertion:
 			sorter = new InsertionSort<T>(array, size, order);
+			break;
+		case Merge:
+			sorter = new MergeSort<T>(array, size, order);
 			break;
 		case Selection:
 			sorter = new SelectionSort<T>(array, size, order);
