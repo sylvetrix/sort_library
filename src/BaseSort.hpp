@@ -19,6 +19,7 @@ class BaseSort
 		bool checkNullArray() { return (sortArray == NULL); }
 		bool compare(T&, T&);
 		bool compareEqual(T&, T&);
+		bool compareOrEqual(T&, T&);
 		T& getIndex(int);
 		int getSize() { return arraySize; }
 		void setIndex(int, T&);
@@ -96,6 +97,12 @@ bool BaseSort<T>::compareEqual(T& left, T& right)
 	{
 		return false;
 	}
+}
+
+template <class T>
+bool BaseSort<T>::compareOrEqual(T& left, T& right)
+{
+	return (compare(left, right) || compareEqual(left, right));
 }
 
 template <class T>
