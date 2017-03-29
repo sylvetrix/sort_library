@@ -4,6 +4,7 @@
 #include "src/MergeSort.hpp"
 #include "src/QuickSort.hpp"
 #include "src/SelectionSort.hpp"
+#include "src/ShellSort.hpp"
 #include "src/SortOrder.hpp"
 
 using namespace std;
@@ -15,13 +16,14 @@ enum SortFunction
 	Insertion,
 	Merge,
 	Quick,
-	Selection
+	Selection,
+	Shell
 };
 
-const int sortsSize = 5;
+const int sortsSize = 6;
 
 // sorts to test
-SortFunction sorts[sortsSize] = { Bubble, Insertion, Merge, Quick, Selection };
+SortFunction sorts[sortsSize] = { Bubble, Insertion, Merge, Quick, Selection, Shell };
 
 // set array functions
 void setIntArray(int*, int*, int);
@@ -93,6 +95,9 @@ bool testInt()
 				break;
 			case Selection:
 				cout << "Selection";
+				break;
+			case Shell:
+				cout << "Shell";
 				break;
 			default:
 				cout << "Unknown";
@@ -178,6 +183,9 @@ void runSorter(T* array, int size, SortOrder order, SortFunction function)
 			break;
 		case Selection:
 			sorter = new SelectionSort<T>(array, size, order);
+			break;
+		case Shell:
+			sorter = new ShellSort<T>(array, size, order);
 			break;
 		default:
 			return;
