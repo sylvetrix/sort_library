@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include "src/BubbleSort.hpp"
 #include "src/InsertionSort.hpp"
@@ -6,6 +7,11 @@
 #include "src/SelectionSort.hpp"
 #include "src/ShellSort.hpp"
 #include "src/SortOrder.hpp"
+
+#define INT_TEST_SIZE 10000
+#define SORTS_SIZE 6
+#define GEN_TYPE_SIZE 4
+#define ORDERS_SIZE 2
 
 using namespace std;
 
@@ -20,13 +26,28 @@ enum SortFunction
 	Shell
 };
 
-const int sortsSize = 6;
+enum ArrayGenType
+{
+	Ascending,
+	Descending,
+	Interlaced,
+	Random
+};
 
 // sorts to test
-SortFunction sorts[sortsSize] = { Bubble, Insertion, Merge, Quick, Selection, Shell };
+SortFunction sorts[SORTS_SIZE] = { Bubble, Insertion, Merge, Quick, Selection, Shell };
+string sortName(SortFunction);
+
+// ways to generate the array
+ArrayGenType genTypes[GEN_TYPE_SIZE] = { Ascending, Descending, Interlaced, Random };
+string genTypeName(ArrayGenType);
+
+// sort orders
+SortOrder sortOrders[ORDERS_SIZE] = { LowToHigh, HighToLow };
+string orderName(SortOrder);
 
 // set array functions
-void setIntArray(int*, int*, int);
+void setIntArray(int*, int, ArrayGenType);
 
 // type testing functions
 bool testChar();
@@ -48,11 +69,92 @@ int main(int argc, char** argv)
 	testInt();
 }
 
-void setIntArray(int* newArray, int* initialArray, int size)
+string sortName(SortFunction function)
 {
-	for (int i = 0; i < size; i++)
+	switch(function)
 	{
-		newArray[i] = initialArray[i];
+		case Bubble:
+			return "Bubble";
+		case Insertion:
+			return "Insertion";
+		case Merge:
+			return "Merge";
+		case Quick:
+			return "Quick";
+		case Selection:
+			return "Selection";
+		case Shell:
+			return "Shell";
+		default:
+			return "Unknown";
+	}
+}
+
+string genTypeName(ArrayGenType genType)
+{
+	switch (genType)
+	{
+		case Ascending:
+			return "Ascending";
+		case Descending:
+			return "Descending";
+		case Interlaced:
+			return "Interlaced";
+		case Random:
+			return "Random";
+		default:
+			return "Unknown";
+	}
+}
+
+string orderName(SortOrder order)
+{
+	switch (order)
+	{
+		case LowToHigh:
+			return "Low to High";
+		case HighToLow:
+			return "High to Low";
+		default:
+			return "Unknown Order";
+	}
+}
+
+void setIntArray(int* testArray, int arraySize, ArrayGenType genType)
+{
+	switch (genType)
+	{
+		case Ascending:
+			for (int i = 0; i < arraySize; i++)
+			{
+				testArray[i] = i;
+			}
+			break;
+		case Descending:
+			for (int i = arraySize - 1; i >= 0; i--)
+			{
+				testArray[i] = i;
+			}
+			break;
+		case Interlaced:
+			{
+				int maxNum = (int)(arraySize / 2) - 1;
+				for (int i = 0; i < arraySize; i += 2)
+				{
+					testArray[i] = i / 2;
+					testArray[i + 1] = maxNum - (i / 2);
+				}
+			}
+			break;
+		case Random:
+			srand((int) time(0));
+			for (int i = 0; i < arraySize; i++)
+			{
+				testArray[i] = rand();
+			}
+			break;
+		default:
+			break;
 	}
 }
 
@@ -68,72 +170,22 @@ bool testClass()
 
 bool testInt()
 {
-	int _sortedArray[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	int _reverseArray[10] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-	int _duplicateArray[10] = { 0, 4, 1, 3, 2, 2, 3, 1, 4, 0 };
+	int testArray[INT_TEST_SIZE];
 
-	int sortedArray[10];
-	int reverseArray[10];
-	int duplicateArray[10];
-
-	for (int i = 0; i < sortsSize; i++)
+	for (int s = 0; s < SORTS_SIZE; s++)
 	{
-		cout << "Testing ";
-		switch (sorts[i])
+		cout << "Testing " << sortName(sorts[s]) << " sort:\n";
+
+		for (int o = 0; o < ORDERS_SIZE; o++)
 		{
-			case Bubble:
-				cout << "Bubble";
-				break;
-			case Insertion:
-				cout << "Insertion";
-				break;
-			case Merge:
-				cout << "Merge";
-				break;
-			case Quick:
-				cout << "Quick";
-				break;
-			case Selection:
-				cout << "Selection";
-				break;
-			case Shell:
-				cout << "Shell";
-				break;
-			default:
-				cout << "Unknown";
-				break;
+			for (int gt = 0; gt < GEN_TYPE_SIZE; gt++)
+			{
+				setIntArray(testArray, INT_TEST_SIZE, genTypes[gt]);
+				runSorter(testArray, INT_TEST_SIZE, sortOrders[o], sorts[s]);
+				cout << "\tType: " << genTypeName(genTypes[gt]) << ",\tOrder: " << orderName(sortOrders[o]) << ": ";
+				cout << (validateIntArray(testArray, INT_TEST_SIZE, sortOrders[o]) ? "[PASSED]\n" : "[FAILED]\n");
+			}
 		}
-		cout << " sort:\n";
-
-		setIntArray(sortedArray, _sortedArray, 10);
-		setIntArray(reverseArray, _reverseArray, 10);
-		setIntArray(duplicateArray, _duplicateArray, 10);
-
-		runSorter(sortedArray, 10, LowToHigh, sorts[i]);
-		runSorter(reverseArray, 10, LowToHigh, sorts[i]);
-		runSorter(duplicateArray, 10, LowToHigh, sorts[i]);
-
-		cout << "\tSorted array, low to high:    ";
-		cout << (validateIntArray(sortedArray, 10, LowToHigh) ? "[PASSED]\n" : "[FAILED]\n");
-		cout << "\tReversed array, low to high:  ";
-		cout << (validateIntArray(reverseArray, 10, LowToHigh) ? "[PASSED]\n" : "[FAILED]\n");
-		cout << "\tDuplicate array, low to high: ";
-		cout << (validateIntArray(duplicateArray, 10, LowToHigh) ? "[PASSED]\n" : "[FAILED]\n");
-
-		setIntArray(sortedArray, _sortedArray, 10);
-		setIntArray(reverseArray, _reverseArray, 10);
-		setIntArray(duplicateArray, _duplicateArray, 10);
-
-		runSorter(sortedArray, 10, HighToLow, sorts[i]);
-		runSorter(reverseArray, 10, HighToLow, sorts[i]);
-		runSorter(duplicateArray, 10, HighToLow, sorts[i]);
-
-		cout << "\tSorted array, low to high:    ";
-		cout << (validateIntArray(sortedArray, 10, HighToLow) ? "[PASSED]\n" : "[FAILED]\n");
-		cout << "\tReversed array, low to high:  ";
-		cout << (validateIntArray(reverseArray, 10, HighToLow) ? "[PASSED]\n" : "[FAILED]\n");
-		cout << "\tDuplicate array, low to high: ";
-		cout << (validateIntArray(duplicateArray, 10, HighToLow) ? "[PASSED]\n" : "[FAILED]\n");
 	}
 }
 
